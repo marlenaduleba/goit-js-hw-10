@@ -16,18 +16,31 @@ function displayCountries(event) {
     const search = input.value;
    fetchCountries(search)
    .then((res) => {
-    renderInfo(res);
-    console.log(res);
-   })
+    if (res.length <2) {
+        renderInfo(res);
+        return;
+    } else if (res.length >= 2 && res.length <= 10) {
+        renderList(res);
+        return;
+    } else if (res.innerHTML === "") {
+        clear();
+        return;
+    }
+        else {
+        Notify.info("Too many matches found. Please enter a more specific name.");
+        return;
+    }
+    })
    .catch((error) => {
     console.log(error);
    })
+   clear();
 }
 
 function renderList(data) {
   const markup = data
     .map(({ name, flags }) => {
-      return `<li><img src="${flags.svg}" alt="country flag"></img>${name.official}</li>`;
+      return `<li><img src="${flags.svg}" alt="country flag"></img> ${name.official}</li>`;
     })
     .join('');
   countryList.insertAdjacentHTML('beforeend', markup);
@@ -36,11 +49,16 @@ function renderList(data) {
 function renderInfo(data) {
   const markup = data
     .map(({ name, capital, population, flags, languages }) => {
-    return `<li><img src="${flags.svg}" alt="country flag"></img>${name.official}</li>
-            <li>${capital}</li>
-            <li>${population}</li>
-            <li>${Object.values(languages)}</li>`;
+    return `<li><img src="${flags.svg}" alt="country flag"></img> ${name.official}</li>
+            <li>Capital: ${capital}</li>
+            <li>Population: ${population}</li>
+            <li>Languages: ${Object.values(languages)}</li>`;
     })
     .join('');
   countryList.insertAdjacentHTML('beforeend', markup);
+}
+
+function clear() {
+    countryList.innerHTML = "";
+    countryInfo.innerHTML = "";
 }
