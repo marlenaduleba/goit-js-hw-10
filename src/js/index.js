@@ -12,29 +12,33 @@ const countryInfo = document.querySelector('.country-info');
 input.addEventListener('input', debounce(displayCountries, DEBOUNCE_DELAY));
 
 function displayCountries(event) {
-    event.preventDefault();
-    const search = input.value;
-   fetchCountries(search)
-   .then((res) => {
-    if (res.length <2) {
+  event.preventDefault();
+  const search = input.value;
+  const trimmedSearch = search.trim();
+  fetchCountries(trimmedSearch)
+    .then(res => {
+      if (res.length < 2) {
         renderInfo(res);
         return;
-    } else if (res.length >= 2 && res.length <= 10) {
+      } else if (res.length >= 2 && res.length <= 10) {
         renderList(res);
         return;
-    } else if (res.innerHTML === "") {
+      } else if (res.innerHTML === '') {
         clear();
         return;
-    }
-        else {
-        Notify.info("Too many matches found. Please enter a more specific name.");
+      } else {
+        Notify.info(
+          'Too many matches found. Please enter a more specific name.'
+        );
         return;
-    }
+      }
     })
-   .catch((error) => {
-    console.log(error);
-   })
-   clear();
+    .catch(error => {
+      console.log(error);
+      Notify.failure('Oops, there is no country with that name');
+      return;
+    });
+  clear();
 }
 
 function renderList(data) {
@@ -49,7 +53,9 @@ function renderList(data) {
 function renderInfo(data) {
   const markup = data
     .map(({ name, capital, population, flags, languages }) => {
-    return `<li><img src="${flags.svg}" alt="country flag"></img> ${name.official}</li>
+      return `<li><img src="${flags.svg}" alt="country flag"></img> ${
+        name.official
+      }</li>
             <li>Capital: ${capital}</li>
             <li>Population: ${population}</li>
             <li>Languages: ${Object.values(languages)}</li>`;
@@ -59,6 +65,6 @@ function renderInfo(data) {
 }
 
 function clear() {
-    countryList.innerHTML = "";
-    countryInfo.innerHTML = "";
+  countryList.innerHTML = '';
+  countryInfo.innerHTML = '';
 }
