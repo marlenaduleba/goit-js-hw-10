@@ -13,10 +13,6 @@ Notify.init({
   showOnlyTheLastOne: true,
 });
 
-Report.init({
-  position: `center-center`,
-});
-
 input.addEventListener('input', debounce(displayCountries, DEBOUNCE_DELAY));
 
 function displayCountries(event) {
