@@ -1,13 +1,21 @@
 import '../css/styles.css';
 import debounce from 'lodash.debounce';
-import Notiflix, { Notify } from 'notiflix';
+import Notiflix, { Notify, Report } from 'notiflix';
 import { fetchCountries } from './fetchCountries';
 
 const DEBOUNCE_DELAY = 300;
-
 const input = document.querySelector('#search-box');
 const countryList = document.querySelector('.country-list');
 const countryInfo = document.querySelector('.country-info');
+
+Notify.init({
+  position: 'center-top',
+  showOnlyTheLastOne: true,
+});
+
+Report.init({
+  position: `center-center`,
+});
 
 input.addEventListener('input', debounce(displayCountries, DEBOUNCE_DELAY));
 
@@ -18,8 +26,14 @@ function displayCountries(event) {
   fetchCountries(trimmedSearch)
     .then(res => {
       if (res.length < 2) {
-        renderInfo(res);
-        return;
+        console.log(res);
+        if (res[0].name.common === `Russia`) {
+          Report.failure(`FUCK PUTIN!!!`, ``);
+          return;
+        } else {
+          renderInfo(res);
+          return;
+        }
       } else if (res.length >= 2 && res.length <= 10) {
         renderList(res);
         return;
@@ -44,7 +58,7 @@ function displayCountries(event) {
 function renderList(data) {
   const markup = data
     .map(({ name, flags }) => {
-      return `<li><img src="${flags.svg}" alt="country flag"></img> ${name.official}</li>`;
+      return `<li class="country-element list"><img class="flag" src="${flags.svg}" alt="country flag"></img><span class="country-description bold">${name.official}</span></li>`;
     })
     .join('');
   countryList.insertAdjacentHTML('beforeend', markup);
@@ -53,15 +67,22 @@ function renderList(data) {
 function renderInfo(data) {
   const markup = data
     .map(({ name, capital, population, flags, languages }) => {
-      return `<li><img src="${flags.svg}" alt="country flag"></img> ${
-        name.official
-      }</li>
-            <li>Capital: ${capital}</li>
-            <li>Population: ${population}</li>
-            <li>Languages: ${Object.values(languages)}</li>`;
+      return `<div class="country-element info row">
+        <div class="country-heading">
+          <img class="flag-high" src="${flags.svg}" alt="country flag"></img>
+            <h2 class="country-description">${name.official}</h2>
+        </div>
+      <ul>
+      <li class="country-list"><span class="bold">Capital:  </span>${capital}</li>
+      <li class="country-list"><span class="bold">Population:  </span>${population}</li>
+      <li class="country-list"><span class="bold">Languages:  </span>${Object.values(
+        languages
+      )}</li>
+      </ul>
+      </div>`;
     })
     .join('');
-  countryList.insertAdjacentHTML('beforeend', markup);
+  countryInfo.insertAdjacentHTML('beforeend', markup);
 }
 
 function clear() {
