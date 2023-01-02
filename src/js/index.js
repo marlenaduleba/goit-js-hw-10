@@ -22,7 +22,6 @@ function displayCountries(event) {
   fetchCountries(trimmedSearch)
     .then(res => {
       if (res.length < 2) {
-        console.log(res);
         if (res[0].name.common === `Russia`) {
           Report.failure(`FUCK PUTIN!!!`, ``);
           return;

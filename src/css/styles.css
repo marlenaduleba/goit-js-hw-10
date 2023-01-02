@@ -35,6 +35,13 @@ ul {
   text-align: center;
 }
 
+.search-description {
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+  gap: 10px;
+}
+
 .country-list {
   display: flex;
   flex-wrap: wrap;
@@ -86,7 +93,7 @@ ul {
 }
 
 .country-description {
-  display: flex; 
+  display: flex;
   align-items: center;
 }
 
